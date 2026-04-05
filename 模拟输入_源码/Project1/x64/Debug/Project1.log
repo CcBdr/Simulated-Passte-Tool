@@ -1,3 +1,3 @@
 ﻿  源.cpp
-F:\c++\C++20-23TextN0grcom\Project1\源.cpp(83,24): warning C4244: “初始化”: 从“WPARAM”转换到“int”，可能丢失数据
-  Project1.vcxproj -> F:\c++\C++20-23TextN0grcom\Project1\x64\Debug\Project1.exe
+F:\超级牛逼的东西\模拟输入\模拟输入_源码\源.cpp(111,24): warning C4244: “初始化”: 从“WPARAM”转换到“int”，可能丢失数据
+  Project1.vcxproj -> F:\超级牛逼的东西\模拟输入\模拟输入_源码\x64\Debug\Project1.exe
