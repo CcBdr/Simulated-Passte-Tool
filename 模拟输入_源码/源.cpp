@@ -45,6 +45,7 @@ void send_unicode_char(wchar_t ch) {
 }
 
 void send_enter() {
+    // ⭐ 用真实回车（关键）
     INPUT input[2] = {};
 
     input[0].type = INPUT_KEYBOARD;
@@ -54,22 +55,45 @@ void send_enter() {
     input[1].ki.dwFlags = KEYEVENTF_KEYUP;
 
     SendInput(2, input, sizeof(INPUT));
+
+    Sleep(0 + rand() % 25);
+}
+
+void move_to_home() {
+    INPUT input[2] = {};
+
+    // 按下 Home
+    input[0].type = INPUT_KEYBOARD;
+    input[0].ki.wVk = VK_HOME;
+
+    // 抬起 Home
+    input[1] = input[0];
+    input[1].ki.dwFlags = KEYEVENTF_KEYUP;
+
+    SendInput(2, input, sizeof(INPUT));
+
+    Sleep(10);
 }
 
 void send_unicode_string(const std::wstring& text) {
-    for (wchar_t ch : text) {
-        if (ch== L'\r') continue;
-     
+    bool last_was_newline = false;
+
+    for (size_t i = 0; i < text.length(); ++i) {
+        wchar_t ch = text[i];
+
+        if (ch == L'\r') continue;
+
         if (ch == L'\n') {
-            send_enter();   // ⭐ 用回车代替
+            send_enter();
+            move_to_home();
+
         }
         else {
+
             send_unicode_char(ch);
         }
 
-           
-    
-        Sleep(8 + rand() % 30);
+        Sleep(20 + rand() % 20); // 适当加快速度，减少 IDE 反应时间
     }
 }
 
@@ -92,34 +116,34 @@ void up_ctrl_shift() {
 }
 
 int main() {
-   
 
-  
-        HWND hwnd = GetConsoleWindow();
-        ShowWindow(hwnd, SW_MINIMIZE); // 隐藏控制台
- 
-        if (!RegisterHotKey(nullptr, 1, MOD_CONTROL | MOD_SHIFT, 'V')) {
-            MessageBox(nullptr, L"热键注册失败！", L"Error", MB_ICONERROR);
-            return 1;
-        }
 
-        MSG msg = { 0 };
 
-        // 消息循环等待热键触发
-        while (GetMessage(&msg, nullptr, 0, 0)) {
-            if (msg.message == WM_HOTKEY) {
-                int id = msg.wParam;
-                if (id == 1) {
-                    up_ctrl_shift();
-                        std::wstring text = get_clipboard_text();
-                            send_unicode_string(text);
-                }
+    HWND hwnd = GetConsoleWindow();
+    ShowWindow(hwnd, SW_MINIMIZE); // 隐藏控制台
+
+    if (!RegisterHotKey(nullptr, 1, MOD_CONTROL | MOD_SHIFT, 'V')) {
+        MessageBox(nullptr, L"热键注册失败！", L"Error", MB_ICONERROR);
+        return 1;
+    }
+
+    MSG msg = { 0 };
+
+    // 消息循环等待热键触发
+    while (GetMessage(&msg, nullptr, 0, 0)) {
+        if (msg.message == WM_HOTKEY) {
+            int id = msg.wParam;
+            if (id == 1) {
+                up_ctrl_shift();
+                std::wstring text = get_clipboard_text();
+                send_unicode_string(text);
             }
         }
+    }
 
-        UnregisterHotKey(nullptr, 1);
+    UnregisterHotKey(nullptr, 1);
 
-   
-  
+
+
     return 0;
 }
